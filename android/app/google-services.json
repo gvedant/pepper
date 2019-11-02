@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "623406502284",
+    "firebase_url": "https://pepper-31d8c.firebaseio.com",
+    "project_id": "pepper-31d8c",
+    "storage_bucket": "pepper-31d8c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:623406502284:android:f0ae5d524a95e9759246a9",
+        "android_client_info": {
+          "package_name": "com.example.flutter_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "623406502284-lcc6hvv4n82tgevia4r7893iv8d0kqds.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBXB3yjbQBFkaCJZXtGXhHMpEwKiQbXV2A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "623406502284-lcc6hvv4n82tgevia4r7893iv8d0kqds.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
