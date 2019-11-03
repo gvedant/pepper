@@ -81,7 +81,7 @@ class RandomWordsState extends State<RandomWords> {
         child: ListTile(
           title: Text(offer.offer),
           subtitle: Text(offer.restaurant),
-          trailing: Text(curr.difference(offer.dateTime).inSeconds.toString()),
+          trailing: Text(offer.getTime(curr.difference(offer.dateTime).inSeconds)),
         ),
       ),
     );
@@ -142,7 +142,7 @@ class RandomWordsState extends State<RandomWords> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Startup Name Generator'),
+        title: Text('Pepper'),
         actions: <Widget>[
           IconButton(icon: Icon(Icons.list), onPressed: _pushSaved),
         ],
@@ -161,4 +161,41 @@ class Offer {
     : restaurant = snapshot.data['Restaurant'],
       offer = snapshot.data['Offer'],
       dateTime = snapshot.data['Timestamp'].toDate();
+
+  String getTime(int seconds) {
+    if (seconds < 60) {
+      if (seconds == 1) {
+        return "1 second";
+      }
+      return "60 seconds";
+    }
+
+    else if (seconds < 3600) {
+      int min = (seconds / 60).round();
+      if (min == 1) {
+        return "1 minute";
+      }
+      return (seconds / 60).round().toString() + " minutes";
+    }
+
+    else if (seconds < 86400) {
+      int hours = (seconds / 3600).round();
+      if (hours == 1) {
+        return "1 hour";
+      }
+      return (seconds / 3600).round().toString() + " hours";
+    }
+
+    else if (seconds < 1209600) {
+      int days = (seconds / 86400).round();
+      if (days == 1) {
+        return "1 day";
+      }
+      return (seconds / 86400).round().toString() + " days";
+    }
+
+    else {
+      return "14+ days";
+    }
+  }
 }
