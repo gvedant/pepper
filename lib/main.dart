@@ -4,6 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:english_words/english_words.dart';
+import 'package:flutter_app/submissionform.dart';
 
 void main() => runApp(MyApp());
 
@@ -11,7 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Startup Name Generator',
+      title: 'Pepper',
       theme: ThemeData(
         primaryColor: Colors.white,
       ),
@@ -89,9 +90,9 @@ class RandomWordsState extends State<RandomWords> {
 
           return Scaffold(
             appBar: AppBar(
-              title: Text('Saved Suggestions'),
+              title: Text('Submit an Offer'),
             ),
-            body: ListView(children: divided,),
+            body: SubmissionForm()
           );
         }
       )
@@ -102,7 +103,7 @@ class RandomWordsState extends State<RandomWords> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Startup Name Generator'),
+        title: Text('Pepper'),
         actions: <Widget>[
           IconButton(icon: Icon(Icons.list), onPressed: _pushSaved),
         ],
