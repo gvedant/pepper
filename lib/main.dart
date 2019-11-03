@@ -147,8 +147,10 @@ class RandomWordsState extends State<RandomWords> {
 
   Offer calc_distance(DocumentSnapshot sp) {
     if(userLocation == null) return Offer.fromSnapshot(sp, -1);
-    final Distance distance = Distance();
-    final double miles = 0.000621371*distance(new LatLng(36.143284, -86.805711),
+    print(userLocation['latitude']);
+    print(userLocation['longitude']);
+    final Distance distance = Distance(); // 36.143284, -86.805711
+    final double miles = 0.000621371*distance(new LatLng(userLocation['latitude'], userLocation['longitude']),
         new LatLng(sp.data['latitute'], sp.data['longitude']));
     return Offer.fromSnapshot(sp, miles);
   }
