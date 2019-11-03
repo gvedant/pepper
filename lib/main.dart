@@ -180,7 +180,7 @@ class RandomWordsState extends State<RandomWords> {
 
           return Scaffold(
             appBar: AppBar(
-              title: Text('Submit an Offer'),
+              title: Text('submit an offer'),
             ),
             body: SubmissionForm()
           );

@@ -41,10 +41,16 @@ class MyCustomFormState extends State<SubmissionForm> {
     return Form(
       key: _formKey,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Column(
-              children: <Widget>[ RaisedButton(
+
+              children: <Widget>[
+                Container(
+                  margin: const EdgeInsets.all(50),
+                  child: RaisedButton(
+                    color: Colors.teal[300],
+                  padding: const EdgeInsets.all(15),
                   onPressed: () async {
                     Prediction p = await PlacesAutocomplete.show(
                         context: context, apiKey: kGoogleApiKey);
@@ -53,15 +59,26 @@ class MyCustomFormState extends State<SubmissionForm> {
                     displayPrediction(p);
                   },
 
-                  child: Text('search for a restaurant')
-              ),
-                TextField(
+                  child: Text('search for a restaurant', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black),),
+              ),),
+                Container(
+                  padding: const EdgeInsets.only(bottom: 15),
+                child: TextField(
+
+                  textAlign: TextAlign.center,
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.zero
+                  ),
                   controller: _restaurantController,
+                  style: TextStyle(
+                    fontSize: 12,
+                  ),
+                )
                 )
               ]
           ),
           TextFormField(
-            decoration: new InputDecoration(hintText: 'Offer description'),
+            decoration: new InputDecoration(hintText: '   Offer description'),
             controller: _offerController,
             validator: (value) {
               if (value.isEmpty) {
@@ -70,9 +87,13 @@ class MyCustomFormState extends State<SubmissionForm> {
               return null;
             },
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0),
-            child: RaisedButton(
+          Column(
+            children:<Widget>[
+              Container(
+                margin: const EdgeInsets.all(55),
+              child: RaisedButton(
+                color: Colors.teal[300],
+              padding: const EdgeInsets.all(15),
               onPressed: () {
 
                 // Validate returns true if the form is valid, or false
@@ -89,9 +110,9 @@ class MyCustomFormState extends State<SubmissionForm> {
                       .showSnackBar(SnackBar(content: Text('Thanks!')));
                 }
               },
-              child: Text('Submit'),
-            ),
-          ),
+              child: Text('submit', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),),
+            ),),
+          ]),
         ],
       ),
     );
