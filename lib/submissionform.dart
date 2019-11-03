@@ -64,7 +64,7 @@ class MyCustomFormState extends State<SubmissionForm> {
                 Container(
                   padding: const EdgeInsets.only(bottom: 15),
                 child: TextField(
-
+                  enabled: false,
                   textAlign: TextAlign.center,
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.zero
@@ -94,7 +94,7 @@ class MyCustomFormState extends State<SubmissionForm> {
               child: RaisedButton(
                 color: Colors.teal[300],
               padding: const EdgeInsets.all(15),
-              onPressed: () {
+              onPressed: () async {
 
                 // Validate returns true if the form is valid, or false
                 // otherwise.
@@ -103,7 +103,7 @@ class MyCustomFormState extends State<SubmissionForm> {
                   Scaffold.of(context)
                       .showSnackBar(SnackBar(content: Text('Sending Offer')));
 
-                  createRecord();
+                  await createRecord();
                   _restaurantController.clear();
                   _offerController.clear();
                   Scaffold.of(context)
@@ -129,7 +129,7 @@ class MyCustomFormState extends State<SubmissionForm> {
     }
   }
 
-  void createRecord() async {
+  Future createRecord() async {
 
     DocumentReference ref = await databaseReference.collection("offers")
         .add({
