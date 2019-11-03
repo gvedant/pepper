@@ -4,6 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:english_words/english_words.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() => runApp(MyApp());
 
@@ -53,7 +54,7 @@ class RandomWordsState extends State<RandomWords> {
     );
   }
 
-  Widget _buildSuggestions() {
+  /*Widget _buildSuggestions() {
     return ListView.builder(
         padding: const EdgeInsets.all(16.0),
         itemBuilder: (context, i) {
@@ -64,6 +65,45 @@ class RandomWordsState extends State<RandomWords> {
           }
           return _buildRow(_suggestions[index]);
         });
+  }*/
+
+  Widget _buildListItem(BuildContext context, DocumentSnapshot data, DateTime curr) {
+    final Offer offer = Offer.fromSnapshot(data);
+
+    return Padding(
+      key: ValueKey(offer.restaurant),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey),
+          borderRadius: BorderRadius.circular(5.0),
+        ),
+        child: ListTile(
+          title: Text(offer.offer),
+          subtitle: Text(offer.restaurant),
+          trailing: Text(curr.difference(offer.dateTime).inSeconds.toString()),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildList(BuildContext context, List<DocumentSnapshot> snapshot) {
+    final DateTime curr = DateTime.now();
+    return ListView(
+      padding: const EdgeInsets.only(top: 20.0),
+      children: snapshot.map((data) => _buildListItem(context, data, curr)).toList(),
+    );
+  }
+
+  Widget _buildBody(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: Firestore.instance.collection('offers').snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) return LinearProgressIndicator();
+
+        return _buildList(context, snapshot.data.documents);
+      },
+    );
   }
 
   void _pushSaved() {
@@ -107,7 +147,18 @@ class RandomWordsState extends State<RandomWords> {
           IconButton(icon: Icon(Icons.list), onPressed: _pushSaved),
         ],
       ),
-      body: _buildSuggestions(),
+      body: _buildBody(context),
     );
   }
+}
+
+class Offer {
+  final String restaurant;
+  final String offer;
+  final DateTime dateTime;
+
+  Offer.fromSnapshot(DocumentSnapshot snapshot)
+    : restaurant = snapshot.data['Restaurant'],
+      offer = snapshot.data['Offer'],
+      dateTime = snapshot.data['Timestamp'].toDate();
 }
