@@ -14,7 +14,7 @@ class SubmissionForm extends StatefulWidget {
 }
 
 final _formKey = GlobalKey<FormState>();
-const kGoogleApiKey = "AIzaSyDLSCo_z_aTAS4lz3tw4c9ME8aGjtF9MgE";
+const kGoogleApiKey = "";
 final databaseReference = Firestore.instance;
 
 GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
@@ -50,6 +50,7 @@ class MyCustomFormState extends State<SubmissionForm> {
                         context: context, apiKey: kGoogleApiKey);
                     _restaurantController.text = p.description;
                     restaurantName = p.description.split(',')[0];
+                    displayPrediction(p);
                   },
 
                   child: Text('search for a restaurant')
@@ -80,6 +81,7 @@ class MyCustomFormState extends State<SubmissionForm> {
                   // If the form is valid, display a Snackbar.
                   Scaffold.of(context)
                       .showSnackBar(SnackBar(content: Text('Sending Offer')));
+
                   createRecord();
                   _restaurantController.clear();
                   _offerController.clear();
@@ -103,11 +105,6 @@ class MyCustomFormState extends State<SubmissionForm> {
       var placeId = p.placeId;
       lat = detail.result.geometry.location.lat;
       lng = detail.result.geometry.location.lng;
-
-      var address = await Geocoder.local.findAddressesFromQuery(p.description);
-
-      print(lat);
-      print(lng);
     }
   }
 
