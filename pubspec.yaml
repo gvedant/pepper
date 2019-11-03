@@ -29,6 +29,7 @@ dependencies:
   geocoder: ^0.2.1
   location: ^1.4.1
   latlong: ^0.6.1
+  url_launcher: ^5.2.5
 
 
 dev_dependencies:

@@ -8,6 +8,7 @@ import 'package:flutter_app/submissionform.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:location/location.dart';
 import 'package:latlong/latlong.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 void main() => runApp(MyApp());
 
@@ -140,19 +141,20 @@ class RandomWordsState extends State<RandomWords> {
           title: Text(offer.offer),
           subtitle: Text(offer.restaurant + "   " + offer.distance.toStringAsFixed(2) + " mi"),
           trailing: Text(offer.getTime(curr.difference(offer.dateTime).inSeconds)),
+          onTap: () => MapUtils.openMap(offer.latitude, offer.longitude),
         ),
       ),
     );
   }
 
   Offer calc_distance(DocumentSnapshot sp) {
-    if(userLocation == null) return Offer.fromSnapshot(sp, -1);
+    if(userLocation == null) return Offer.fromSnapshot(sp, -1, -1, -1);
     print(userLocation['latitude']);
     print(userLocation['longitude']);
     final Distance distance = Distance(); // 36.143284, -86.805711
     final double miles = 0.000621371*distance(new LatLng(userLocation['latitude'], userLocation['longitude']),
         new LatLng(sp.data['latitute'], sp.data['longitude']));
-    return Offer.fromSnapshot(sp, miles);
+    return Offer.fromSnapshot(sp, miles, sp.data['latitute'], sp.data['longitude']);
   }
 
   Widget _buildList(BuildContext context, List<DocumentSnapshot> snapshot) {
@@ -250,12 +252,16 @@ class Offer {
   final String offer;
   final DateTime dateTime;
   final double distance;
+  final double latitude;
+  final double longitude;
 
-  Offer.fromSnapshot(DocumentSnapshot snapshot, double d)
+  Offer.fromSnapshot(DocumentSnapshot snapshot, double d, double lat, double lng)
     : restaurant = snapshot.data['Restaurant'],
       offer = snapshot.data['Offer'],
       dateTime = snapshot.data['Timestamp'].toDate(),
-      distance = d;
+      distance = d,
+      latitude = lat,
+      longitude = lng;
 
   String getTime(int seconds) {
     if (seconds < 60) {
@@ -294,6 +300,18 @@ class Offer {
 
     else {
       return "14+ days";
+    }
+  }
+}
+
+class MapUtils {
+
+  static openMap(double latitude, double longitude) async {
+    String googleUrl = 'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
+    if (await canLaunch(googleUrl)) {
+      await launch(googleUrl);
+    } else {
+      throw 'Could not open the map.';
     }
   }
 }
