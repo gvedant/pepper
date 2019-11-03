@@ -14,7 +14,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Startup Name Generator',
       theme: ThemeData(
-        primaryColor: Colors.white,
+        brightness: Brightness.dark,
+        primaryColor: Colors.teal[300],
+        accentColor: Colors.cyan[600],
       ),
       home: RandomWords(),
     );
@@ -54,19 +56,6 @@ class RandomWordsState extends State<RandomWords> {
     );
   }
 
-  /*Widget _buildSuggestions() {
-    return ListView.builder(
-        padding: const EdgeInsets.all(16.0),
-        itemBuilder: (context, i) {
-          if(i.isOdd) return Divider();
-          final index = i ~/ 2;
-          if(index >= _suggestions.length) {
-            _suggestions.addAll(generateWordPairs().take(10));
-          }
-          return _buildRow(_suggestions[index]);
-        });
-  }*/
-
   Widget _buildListItem(BuildContext context, DocumentSnapshot data, DateTime curr) {
     final Offer offer = Offer.fromSnapshot(data);
 
@@ -99,9 +88,10 @@ class RandomWordsState extends State<RandomWords> {
     return StreamBuilder<QuerySnapshot>(
       stream: Firestore.instance.collection('offers').snapshots(),
       builder: (context, snapshot) {
+
         if (!snapshot.hasData) return LinearProgressIndicator();
 
-        return _buildList(context, snapshot.data.documents);
+        return _buildList(context, snapshot.data.documents.reversed.toList());
       },
     );
   }
@@ -142,7 +132,7 @@ class RandomWordsState extends State<RandomWords> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Pepper'),
+        title: Text('pepper.'),
         actions: <Widget>[
           IconButton(icon: Icon(Icons.list), onPressed: _pushSaved),
         ],
@@ -164,10 +154,13 @@ class Offer {
 
   String getTime(int seconds) {
     if (seconds < 60) {
-      if (seconds == 1) {
+      if (seconds < 1) {
+        return "Just now";
+      }
+      else if (seconds == 1) {
         return "1 second";
       }
-      return "60 seconds";
+      return seconds.toString() + " seconds";
     }
 
     else if (seconds < 3600) {
