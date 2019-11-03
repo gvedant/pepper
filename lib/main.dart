@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:english_words/english_words.dart';
 import 'package:flutter_app/submissionform.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:location/location.dart';
+import 'package:latlong/latlong.dart';
 
 void main() => runApp(MyApp());
 
@@ -41,9 +43,9 @@ class MyApp extends StatelessWidget {
           ),
           body: TabBarView(
             children: [
-              RandomWords(),
-              RandomWords(),
-              RandomWords(),
+              RandomWords(0),
+              RandomWords(1),
+              RandomWords(2),
             ],
           ),
         ),
@@ -85,14 +87,22 @@ class MyApp extends StatelessWidget {
 }
 
 class RandomWords extends StatefulWidget {
+  int state;
+  RandomWords(int state) : state = state;
+
   @override
-  RandomWordsState createState() => RandomWordsState();
+  RandomWordsState createState() => RandomWordsState(state);
 }
 
 class RandomWordsState extends State<RandomWords> {
   final List<WordPair> _suggestions = <WordPair>[];
   final Set<WordPair> _saved = Set<WordPair>();
   final TextStyle _biggerFont = const TextStyle(fontSize: 18.0);
+  Location location = Location();
+  Map<String, double> userLocation;
+  int state;
+
+  RandomWordsState(int state) : state = state;
 
   Widget _buildRow(WordPair pair) {
     final bool alreadySaved = _saved.contains(pair);
@@ -117,9 +127,7 @@ class RandomWordsState extends State<RandomWords> {
     );
   }
 
-  Widget _buildListItem(BuildContext context, DocumentSnapshot data, DateTime curr) {
-    final Offer offer = Offer.fromSnapshot(data);
-
+  Widget _buildListItem(BuildContext context, Offer offer, DateTime curr) {
     return Padding(
       key: ValueKey(offer.restaurant),
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -130,18 +138,32 @@ class RandomWordsState extends State<RandomWords> {
         ),
         child: ListTile(
           title: Text(offer.offer),
-          subtitle: Text(offer.restaurant),
+          subtitle: Text(offer.restaurant + "   " + offer.distance.toStringAsFixed(2) + " mi"),
           trailing: Text(offer.getTime(curr.difference(offer.dateTime).inSeconds)),
         ),
       ),
     );
   }
 
+  Offer calc_distance(DocumentSnapshot sp) {
+    if(userLocation == null) return Offer.fromSnapshot(sp, -1);
+    final Distance distance = Distance();
+    final double miles = 0.000621371*distance(new LatLng(36.143284, -86.805711),
+        new LatLng(sp.data['latitute'], sp.data['longitude']));
+    return Offer.fromSnapshot(sp, miles);
+  }
+
   Widget _buildList(BuildContext context, List<DocumentSnapshot> snapshot) {
+    List<Offer> offers = snapshot.map((data) => calc_distance(data)).toList();
+    if(state == 1) { // Want sorted by distance
+      offers.sort((a,b) => a.distance.compareTo(b.distance));
+    }
+
     final DateTime curr = DateTime.now();
+
     return ListView(
       padding: const EdgeInsets.only(top: 20.0),
-      children: snapshot.map((data) => _buildListItem(context, data, curr)).toList(),
+      children: offers.map((data) => _buildListItem(context, data, curr)).toList(),
     );
   }
 
@@ -191,6 +213,12 @@ class RandomWordsState extends State<RandomWords> {
 
   @override
   Widget build(BuildContext context) {
+
+    // update user's location when state changes
+    _getLocation().then((value) {
+        userLocation = value;
+    });
+
     return Scaffold(
 //      appBar: AppBar(
 //        title: Text('pepper.'),
@@ -203,17 +231,29 @@ class RandomWordsState extends State<RandomWords> {
       body: _buildBody(context),
     );
   }
+
+  Future<Map<String, double>> _getLocation() async {
+    var currentLocation;
+    try {
+      currentLocation = await location.getLocation();
+    } catch (e) {
+      currentLocation = null;
+    }
+    return currentLocation;
+  }
 }
 
 class Offer {
   final String restaurant;
   final String offer;
   final DateTime dateTime;
+  final double distance;
 
-  Offer.fromSnapshot(DocumentSnapshot snapshot)
+  Offer.fromSnapshot(DocumentSnapshot snapshot, double d)
     : restaurant = snapshot.data['Restaurant'],
       offer = snapshot.data['Offer'],
-      dateTime = snapshot.data['Timestamp'].toDate();
+      dateTime = snapshot.data['Timestamp'].toDate(),
+      distance = d;
 
   String getTime(int seconds) {
     if (seconds < 60) {
