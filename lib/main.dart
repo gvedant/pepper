@@ -10,18 +10,78 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
+  final Set<WordPair> _saved = Set<WordPair>();
+  final TextStyle _biggerFont = const TextStyle(fontSize: 18.0);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Pepper',
       theme: ThemeData(
         brightness: Brightness.dark,
-        primaryColor: Colors.teal[300],
-        accentColor: Colors.cyan[600],
+        primaryColor: Colors.teal[300]
       ),
-      home: RandomWords(),
+
+      home: DefaultTabController(
+        length: 3,
+        child: Scaffold(
+          appBar: AppBar(
+            bottom: TabBar(
+              tabs: [
+                Tab(icon: Icon(Icons.access_time), text: 'Most Recent'),
+                Tab(icon: Icon(Icons.directions_walk), text: 'Closest'),
+                Tab(icon: Icon(Icons.star_border), text: 'Most Upvoted'),
+              ],
+            ),
+            title: Text('pepper.', style: TextStyle(fontSize: 30.0),),
+            centerTitle: true,
+//            actions: <Widget>[
+//            IconButton(icon: Icon(Icons.add), onPressed: _submitOffer),
+//            ],
+          ),
+          body: TabBarView(
+            children: [
+              RandomWords(),
+              RandomWords(),
+              RandomWords(),
+            ],
+          ),
+        ),
+      ),
     );
   }
+
+//  void _submitOffer() {
+//    Navigator.of(context).push(
+//        MaterialPageRoute<void> (
+//            builder: (BuildContext context) {
+//              final Iterable<ListTile> tiles = _saved.map(
+//                      (WordPair pair) {
+//                    return ListTile(
+//                        title: Text(
+//                          pair.asPascalCase,
+//                          style: _biggerFont,
+//                        )
+//                    );
+//                  }
+//              );
+//              final List<Widget> divided = ListTile
+//                  .divideTiles(
+//                  context: context,
+//                  tiles: tiles
+//              )
+//                  .toList();
+//
+//              return Scaffold(
+//                  appBar: AppBar(
+//                    title: Text('Submit an Offer'),
+//                  ),
+//                  body: SubmissionForm()
+//              );
+//            }
+//        )
+//    );
+//  }
 }
 
 class RandomWords extends StatefulWidget {
@@ -132,12 +192,14 @@ class RandomWordsState extends State<RandomWords> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('pepper.'),
-        actions: <Widget>[
-          IconButton(icon: Icon(Icons.add), onPressed: _submitOffer),
-        ],
-      ),
+//      appBar: AppBar(
+//        title: Text('pepper.'),
+//        actions: <Widget>[
+//          IconButton(icon: Icon(Icons.add), onPressed: _submitOffer),
+//        ],
+//      ),
+      floatingActionButton: FloatingActionButton(child: Icon(Icons.add),
+          onPressed: _submitOffer, backgroundColor: Colors.teal[300], foregroundColor: Colors.white),
       body: _buildBody(context),
     );
   }

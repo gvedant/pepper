@@ -14,7 +14,7 @@ class SubmissionForm extends StatefulWidget {
 }
 
 final _formKey = GlobalKey<FormState>();
-const kGoogleApiKey = "";
+const kGoogleApiKey = "AIzaSyDLSCo_z_aTAS4lz3tw4c9ME8aGjtF9MgE";
 final databaseReference = Firestore.instance;
 
 GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
